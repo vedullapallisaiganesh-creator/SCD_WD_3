@@ -1,0 +1,205 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Tic-Tac-Toe Web Application</title>
+  <style>
+    * {
+      box-sizing: border-box;
+      font-family: "Poppins", sans-serif;
+    }
+
+    body {
+      background: linear-gradient(135deg, #141e30, #243b55);
+      color: #fff;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      min-height: 100vh;
+      margin: 0;
+      text-align: center;
+    }
+
+    h1 {
+      font-size: 2.2em;
+      margin-bottom: 10px;
+      color: #00e0ff;
+      text-shadow: 0 0 10px #00e0ff;
+    }
+
+    .container {
+      background: rgba(255, 255, 255, 0.1);
+      padding: 25px;
+      border-radius: 15px;
+      box-shadow: 0 0 15px rgba(0, 255, 255, 0.3);
+    }
+
+    .board {
+      display: grid;
+      grid-template-columns: repeat(3, 100px);
+      grid-gap: 10px;
+      margin: 20px auto;
+    }
+
+    .cell {
+      width: 100px;
+      height: 100px;
+      background: rgba(255, 255, 255, 0.15);
+      border-radius: 10px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 2.5em;
+      cursor: pointer;
+      transition: 0.3s ease;
+    }
+
+    .cell:hover {
+      background: rgba(0, 255, 255, 0.3);
+      transform: scale(1.05);
+    }
+
+    .status {
+      font-size: 1.2em;
+      margin-top: 10px;
+    }
+
+    .controls {
+      margin-top: 20px;
+    }
+
+    button {
+      background: #00e0ff;
+      border: none;
+      padding: 10px 20px;
+      font-size: 1em;
+      border-radius: 8px;
+      cursor: pointer;
+      color: #141e30;
+      font-weight: bold;
+      transition: all 0.3s;
+    }
+
+    button:hover {
+      background: #00bcd4;
+      transform: scale(1.05);
+    }
+
+    footer {
+      margin-top: 30px;
+      font-size: 0.9em;
+      color: #ccc;
+    }
+
+    footer span {
+      color: #00e0ff;
+      font-weight: 600;
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <h1>Tic-Tac-Toe Game</h1>
+    <div class="board" id="board">
+      <div class="cell" data-index="0"></div>
+      <div class="cell" data-index="1"></div>
+      <div class="cell" data-index="2"></div>
+      <div class="cell" data-index="3"></div>
+      <div class="cell" data-index="4"></div>
+      <div class="cell" data-index="5"></div>
+      <div class="cell" data-index="6"></div>
+      <div class="cell" data-index="7"></div>
+      <div class="cell" data-index="8"></div>
+    </div>
+    <div class="status" id="status">Player X's Turn</div>
+    <div class="controls">
+      <button id="resetBtn">Restart Game</button>
+    </div>
+  </div>
+
+  <footer>
+    Developed by <span>Yashwanth Bankapalli</span> | SkillCraft Technology Task 03
+  </footer>
+
+  <script>
+    const cells = document.querySelectorAll(".cell");
+    const statusText = document.getElementById("status");
+    const resetBtn = document.getElementById("resetBtn");
+    const winConditions = [
+      [0, 1, 2],
+      [3, 4, 5],
+      [6, 7, 8],
+      [0, 3, 6],
+      [1, 4, 7],
+      [2, 5, 8],
+      [0, 4, 8],
+      [2, 4, 6],
+    ];
+
+    let options = ["", "", "", "", "", "", "", "", ""];
+    let currentPlayer = "X";
+    let running = false;
+
+    initGame();
+
+    function initGame() {
+      cells.forEach(cell => cell.addEventListener("click", cellClicked));
+      resetBtn.addEventListener("click", restartGame);
+      statusText.textContent = `Player ${currentPlayer}'s Turn`;
+      running = true;
+    }
+
+    function cellClicked() {
+      const cellIndex = this.getAttribute("data-index");
+
+      if (options[cellIndex] !== "" || !running) return;
+
+      updateCell(this, cellIndex);
+      checkWinner();
+    }
+
+    function updateCell(cell, index) {
+      options[index] = currentPlayer;
+      cell.textContent = currentPlayer;
+      cell.style.color = currentPlayer === "X" ? "#00e0ff" : "#ff4081";
+    }
+
+    function changePlayer() {
+      currentPlayer = currentPlayer === "X" ? "O" : "X";
+      statusText.textContent = `Player ${currentPlayer}'s Turn`;
+    }
+
+    function checkWinner() {
+      let roundWon = false;
+
+      for (let i = 0; i < winConditions.length; i++) {
+        const [a, b, c] = winConditions[i];
+        if (options[a] && options[a] === options[b] && options[a] === options[c]) {
+          roundWon = true;
+          break;
+        }
+      }
+
+      if (roundWon) {
+        statusText.textContent = `🎉 Player ${currentPlayer} Wins!`;
+        running = false;
+      } else if (!options.includes("")) {
+        statusText.textContent = "It's a Draw!";
+        running = false;
+      } else {
+        changePlayer();
+      }
+    }
+
+    function restartGame() {
+      currentPlayer = "X";
+      options = ["", "", "", "", "", "", "", "", ""];
+      statusText.textContent = `Player ${currentPlayer}'s Turn`;
+      cells.forEach(cell => (cell.textContent = ""));
+      running = true;
+    }
+  </script>
+</body>
+</html>
